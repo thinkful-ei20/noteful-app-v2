@@ -15,22 +15,22 @@ CREATE TABLE notes (
   title text NOT NULL,
   content text,
   created timestamp DEFAULT now()
-  -- folderId int REFERENCES folders(id) ON DELETE SET NULL;
+  -- folder_id int REFERENCES folders(id) ON DELETE SET NULL;
 );
 
 ALTER SEQUENCE notes_id_seq RESTART WITH 1000;
 
--- If you delete a folder then set folderId to null on related notes
+-- If you delete a folder then set folder_id to null on related notes
 -- IOW, delete a folder and move the notes to "uncategorized"
-ALTER TABLE notes ADD COLUMN folderId int REFERENCES folders(id) ON DELETE SET NULL;
+ALTER TABLE notes ADD COLUMN folder_id int REFERENCES folders(id) ON DELETE SET NULL;
 
 -- Prevent folders from being deleted if are referenced by any note
 -- IOW, only empty folder can be deleted
--- ALTER TABLE notes ADD COLUMN folderId int REFERENCES folders(id) ON DELETE RESTRICT;
+-- ALTER TABLE notes ADD COLUMN folder_id int REFERENCES folders(id) ON DELETE RESTRICT;
 
 -- If you delete a folder then delete all notes that reference the folder
 -- IOW, delete a folder and all the notes in it
--- ALTER TABLE notes ADD COLUMN folderId int REFERENCES folders(id) ON DELETE CASCADE;
+-- ALTER TABLE notes ADD COLUMN folder_id int REFERENCES folders(id) ON DELETE CASCADE;
 
 INSERT INTO folders (name) VALUES
   ('Archive'),
@@ -38,7 +38,7 @@ INSERT INTO folders (name) VALUES
   ('Personal'),
   ('Work');
 
-INSERT INTO notes (title, content, folderId) VALUES
+INSERT INTO notes (title, content, folder_id) VALUES
   (
     '5 life lessons learned from cats',
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
@@ -98,8 +98,8 @@ INSERT INTO notes (title, content, folderId) VALUES
 
 -- -- get all notes with folders
 -- SELECT * FROM notes
--- INNER JOIN folders ON notes.folderId = folders.id;
+-- INNER JOIN folders ON notes.folder_id = folders.id;
 
 -- -- get all notes, show folders if they exists otherwise null
--- SELECT folderId as folderId FROM notes
--- LEFT JOIN folders ON notes.folderId = folders.id;
+-- SELECT folder_id as folderId FROM notes
+-- LEFT JOIN folders ON notes.folder_id = folders.id;

@@ -10,9 +10,9 @@ router.get('/notes', (req, res, next) => {
   const searchTerm = req.query.searchTerm;
   const folderId = req.query.folderId;
 
-  knex.select('notes.id', 'title', 'content', 'folderId', 'folders.name as folderName')
+  knex.select('notes.id', 'title', 'content', 'folder_id', 'folders.name as folderName')
     .from('notes')
-    .leftJoin('folders', 'notes.folderId', 'folders.id')
+    .leftJoin('folders', 'notes.folder_id', 'folders.id')
     .modify(function (queryBuilder) {
       if (searchTerm) {
         queryBuilder.where('title', 'like', `%${searchTerm}%`);
@@ -20,7 +20,7 @@ router.get('/notes', (req, res, next) => {
     })
     .modify(function (queryBuilder) {
       if (folderId) {
-        queryBuilder.where('folderId', folderId);
+        queryBuilder.where('folder_id', folderId);
       }
     })
     .orderBy('notes.id')
@@ -34,9 +34,9 @@ router.get('/notes', (req, res, next) => {
 router.get('/notes/:id', (req, res, next) => {
   const noteId = req.params.id;
 
-  knex.first('notes.id', 'title', 'content', 'folderId', 'folders.name as folderName')
+  knex.first('notes.id', 'title', 'content', 'folder_id', 'folders.name as folderName')
     .from('notes')
-    .leftJoin('folders', 'notes.folderId', 'folders.id')
+    .leftJoin('folders', 'notes.folder_id', 'folders.id')
     .where('notes.id', noteId)
     .then(result => {
       if (result) {
@@ -62,7 +62,7 @@ router.post('/notes', (req, res, next) => {
   const newItem = {
     title: title,
     content: content,
-    folderId: folderId  // Add `folderId`
+    folder_id: folderId  // Add `folderId`
   };
 
   // Insert new note, instead of returning all the fields, just return the new `id`
@@ -71,9 +71,9 @@ router.post('/notes', (req, res, next) => {
     .returning('id')
     .then(([id]) => {
       // Using the new id, select the new note and the folder
-      return knex.select('notes.id', 'title', 'content', 'folderId', 'folders.name as folderName')
+      return knex.select('notes.id', 'title', 'content', 'folder_id', 'folders.name as folderName')
         .from('notes')
-        .leftJoin('folders', 'notes.folderId', 'folders.id')
+        .leftJoin('folders', 'notes.folder_id', 'folders.id')
         .where('notes.id', id);
     })
     .then((results) => {
@@ -99,7 +99,7 @@ router.put('/notes/:id', (req, res, next) => {
   const updateItem = {
     title: title,
     content: content,
-    folderId: folderId
+    folder_id: folderId
   };
 
   knex('notes')
@@ -108,9 +108,9 @@ router.put('/notes/:id', (req, res, next) => {
     .returning(['id'])
     .then(() => {
       // Using the noteId, select the note and the folder info
-      return knex.select('notes.id', 'title', 'content', 'folderId', 'folders.name as folderName')
+      return knex.select('notes.id', 'title', 'content', 'folder_id', 'folders.name as folderName')
         .from('notes')
-        .leftJoin('folders', 'notes.folderId', 'folders.id')
+        .leftJoin('folders', 'notes.folder_id', 'folders.id')
         .where('notes.id', noteId);
     })
     .then(([result]) => {
