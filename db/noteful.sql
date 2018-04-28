@@ -1,4 +1,5 @@
 -- psql -U dev -f ./db/noteful.sql -d noteful-app
+-- psql -U dev -c 'CREATE DATABASE "noteful-app";'
 -- SELECT CURRENT_DATE;
 
 DROP TABLE IF EXISTS notes_tags;

@@ -1,0 +1,12 @@
+language: node_js
+node_js: node
+services: postgresql
+before_script:
+  - psql -U postgres -c 'CREATE DATABASE "noteful-test";'
+# deploy:
+#     provider: heroku
+#     api_key:
+#       secure: [YOUR-API-KEY]
+#     app: [YOUR-APP-NAME]
+#     on:
+#       repo: [YOUR-APP-REPO]

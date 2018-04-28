@@ -129,13 +129,18 @@ router.put('/notes/:id', (req, res, next) => {
     folder_id: (folderId) ? folderId : null
   };
 
-  knex('notes').update(updateItem).where('id', noteId)
+  knex('notes')
+    .update(updateItem)
+    .where('id', noteId)
     .then(() => {
-      return knex.del().from('notes_tags').where('note_id', noteId);
+      return knex.del()
+        .from('notes_tags')
+        .where('note_id', noteId);
     })
     .then(() => {
       const tagsInsert = tags.map(tid => ({ note_id: noteId, tag_id: tid }));
-      return knex.insert(tagsInsert).into('notes_tags');
+      return knex.insert(tagsInsert)
+        .into('notes_tags');
     })
     .then(() => {
       return knex.select('notes.id', 'title', 'content',
